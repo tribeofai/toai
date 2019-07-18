@@ -1,16 +1,15 @@
 from setuptools import setup
 from setuptools import find_packages
 
-long_description = """
-To AI builds on top of Tensorflow and provides utility and
-helper functions for the most common deep learning tasks.
-"""
+with open("README.md", "r") as f:
+    long_description = f.read()
 
 setup(
     name="To AI",
     version="0.0.1",
     description="To AI helper library",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Dovydas Ceilutka",
     author_email="dovydas.ceilutka@gmail.com",
     url="https://github.com/mokahaiku/toai",
