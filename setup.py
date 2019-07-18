@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
-    name="To AI",
+    name="toai-mokahaiku",
     version="0.0.1",
     description="To AI helper library",
     long_description=long_description,
