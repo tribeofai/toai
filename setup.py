@@ -18,7 +18,7 @@ setup(
     license="MIT",
     install_requires=[
         "tensorflow>=2.0.0-beta1",
-        "attr",
+        "attrs",
         "imagehash",
         "funcy",
         "Pillow",
@@ -26,6 +26,7 @@ setup(
         "numpy",
         "pandas",
         "sklearn",
+        "fastprogress",
     ],
     extras_require={
         "tests": [
