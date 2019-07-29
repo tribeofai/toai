@@ -18,7 +18,7 @@ version_line = list(filter(lambda l: l.startswith("VERSION"), open(init)))[0]
 # We could simply import it from the package but we
 # cannot be sure that this package is importable before
 # installation is done.
-PKG_VERSION = get_version(literal_eval(version_line.split("=")[-1]))
+PKG_VERSION = get_version(literal_eval(version_line.split(" = ")[-1]))
 
 with open("README.md", "r") as f:
     long_description = f.read()
