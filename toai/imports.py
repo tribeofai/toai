@@ -26,6 +26,7 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     explained_variance_score,
+    r2_score,
     f1_score,
     log_loss,
     mean_absolute_error,
