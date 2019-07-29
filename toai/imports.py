@@ -17,6 +17,9 @@ import pandas as pd
 import seaborn as sns
 import tensorflow as tf
 from PIL import Image
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import MissingIndicator, SimpleImputer
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
@@ -28,17 +31,18 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer, MissingIndicator
 from sklearn.preprocessing import (
-    StandardScaler,
-    OrdinalEncoder,
-    OneHotEncoder,
-    PolynomialFeatures,
-    Normalizer,
+    Binarizer,
+    LabelEncoder,
+    MinMaxScaler,
     MultiLabelBinarizer,
+    Normalizer,
+    OneHotEncoder,
+    OrdinalEncoder,
+    PolynomialFeatures,
+    RobustScaler,
+    StandardScaler,
 )
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.compose import ColumnTransformer
 from tensorflow import keras
 
 from fastprogress import master_bar, progress_bar
