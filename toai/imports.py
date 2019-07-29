@@ -19,6 +19,7 @@ import tensorflow as tf
 from PIL import Image
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
+from sklearn.decomposition import PCA, KernelPCA, RandomizedPCA
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.impute import MissingIndicator, SimpleImputer
 from sklearn.metrics import (
@@ -26,13 +27,13 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     explained_variance_score,
-    r2_score,
     f1_score,
     log_loss,
     mean_absolute_error,
     mean_squared_error,
     mean_squared_log_error,
     precision_score,
+    r2_score,
     recall_score,
 )
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
