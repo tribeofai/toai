@@ -19,6 +19,7 @@ import tensorflow as tf
 from PIL import Image
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.impute import MissingIndicator, SimpleImputer
 from sklearn.metrics import (
     accuracy_score,
