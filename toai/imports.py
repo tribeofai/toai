@@ -25,12 +25,16 @@ from sklearn.metrics import (
     accuracy_score,
     classification_report,
     confusion_matrix,
+    explained_variance_score,
     f1_score,
     log_loss,
+    mean_absolute_error,
+    mean_squared_error,
+    mean_squared_log_error,
     precision_score,
     recall_score,
 )
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import (
     Binarizer,
