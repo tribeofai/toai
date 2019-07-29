@@ -35,7 +35,6 @@ setup(
     download_url="https://github.com/mokahaiku/toai",
     license="MIT",
     install_requires=[
-        "tensorflow>=2.0.0-beta1",
         "attrs",
         "imagehash",
         "funcy",
