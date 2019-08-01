@@ -36,14 +36,15 @@ setup(
     license="MIT",
     install_requires=[
         "attrs",
-        "imagehash",
+        "fastprogress",
         "funcy",
-        "Pillow",
-        "seaborn",
+        "imagehash",
+        "lightgbm",
         "numpy",
         "pandas",
+        "Pillow",
+        "seaborn",
         "sklearn",
-        "fastprogress",
     ],
     extras_require={
         "tests": [

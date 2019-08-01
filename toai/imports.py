@@ -54,3 +54,5 @@ from sklearn.svm import SVC, SVR, OneClassSVM
 from tensorflow import keras
 
 from fastprogress import master_bar, progress_bar
+
+import lightgbm as lgb
