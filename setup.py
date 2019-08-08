@@ -44,7 +44,8 @@ setup(
         "pandas",
         "Pillow",
         "seaborn",
-        "sklearn",
+        "scikit-learn",
+        "scikit-optimize",
     ],
     extras_require={
         "tests": [
