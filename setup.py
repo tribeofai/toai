@@ -39,6 +39,7 @@ setup(
         "fastprogress",
         "funcy",
         "imagehash",
+        "joblib",
         "lightgbm",
         "numpy",
         "pandas",
