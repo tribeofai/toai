@@ -17,7 +17,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import sklearn as sk
-import tensorflow as tf
 from PIL import Image
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
@@ -53,7 +52,6 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.svm import SVC, SVR, LinearSVC, LinearSVR, OneClassSVM
-from tensorflow import keras
 
 import lightgbm as lgb
 import skopt
