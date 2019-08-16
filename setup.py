@@ -36,6 +36,7 @@ setup(
     license="MIT",
     install_requires=[
         "attrs",
+        "fastparquet",
         "fastprogress",
         "funcy",
         "imagehash",
@@ -44,9 +45,10 @@ setup(
         "numpy",
         "pandas",
         "Pillow",
-        "seaborn",
+        "pyarrow",
         "scikit-learn",
         "scikit-optimize",
+        "seaborn",
     ],
     extras_require={
         "tests": [
