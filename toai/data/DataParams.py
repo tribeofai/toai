@@ -15,4 +15,6 @@ class DataParams:
         self.cont_cols = cont_cols or []
         self.text_cols = text_cols or []
         self.img_cols = img_cols or []
-        self.feature_cols = self.cat_cols + self.cont_cols
+        self.feature_cols = (
+            self.cat_cols + self.cont_cols + self.text_cols + self.img_cols
+        )
