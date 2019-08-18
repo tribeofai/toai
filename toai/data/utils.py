@@ -1,3 +1,6 @@
+from sklearn.model_selection import train_test_split
+
+
 def split_df(data, test_size, target_col=None, random_state=42):
     if target_col:
         stratify = data[target_col]
