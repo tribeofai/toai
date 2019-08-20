@@ -4,6 +4,7 @@ import copy
 import json
 import math
 import pickle
+import re
 import shutil
 import time
 from collections import defaultdict, namedtuple
