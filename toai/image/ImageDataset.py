@@ -78,12 +78,17 @@ class ImageDataset:
         return cls(np.asarray(paths), np.asarray(labels), *args, **kwargs)
 
     def show(self, cols: int = 8, n_batches: int = 1):
-        rows = math.ceil(self.batch_size * n_batches / cols)
+        if cols >= self.batch_size * n_batches:
+            cols = self.batch_size * n_batches
+            rows = 1
+        else:
+            rows = math.ceil(self.batch_size * n_batches / cols)
         _, ax = plt.subplots(rows, cols, figsize=(3 * cols, 3 * rows))
         i = 0
         for x_batch, y_batch in self.data.take(n_batches):
             for (x, y) in zip(x_batch.numpy(), y_batch.numpy()):
-                ax[i // cols, i % cols].axis("off")
-                ax[i // cols, i % cols].imshow(x)
-                ax[i // cols, i % cols].set_title(y)
+                idx = (i // cols, i % cols) if rows > 1 else i % cols
+                ax[idx].axis("off")
+                ax[idx].imshow(x)
+                ax[idx].set_title(y)
                 i += 1
