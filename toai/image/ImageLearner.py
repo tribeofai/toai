@@ -101,19 +101,69 @@ class ImageLearner:
                 keras.callbacks.ReduceLROnPlateau(
                     factor=0.3, patience=reduce_lr_patience
                 ),
-                keras.callbacks.EarlyStopping(patience=early_stopping_patience),
+                keras.callbacks.EarlyStopping(
+                    patience=early_stopping_patience, restore_best_weights=True
+                ),
             ],
             verbose=verbose,
         )
         self.load(weights_only=True)
 
-    def evaluate(self, mode="validation", verbose=1):
+    def evaluate_dataset(self, mode="validation", verbose=1):
         dataset = getattr(self.data, mode)
         return self.model.evaluate(dataset.data, steps=dataset.steps, verbose=verbose)
 
-    def predict(self, mode="validation", verbose=0):
+    def predict_dataset(self, mode="validation", verbose=0):
         dataset = getattr(self.data, mode)
         return self.model.predict(dataset.data, steps=dataset.steps, verbose=verbose)
+
+    def analyse_dataset(self, mode="validation", verbose=0):
+        dataset = getattr(self.data, mode)
+        image_ds = tf.data.Dataset.from_tensor_slices(dataset.x)
+        image_ds = dataset.preprocess(image_ds, 1).batch(1)
+        images = [
+            img[0].numpy() for img in image_ds.take(dataset.steps * dataset.batch_size)
+        ]
+        probs = self.model.predict(image_ds)
+        preds = probs.argmax(axis=1)
+        return pd.DataFrame.from_dict(
+            {
+                "path": dataset.x,
+                "image": images,
+                "label": dataset.y,
+                "pred": preds,
+                "label_probs": probs[:, dataset.y][np.eye(len(dataset.y), dtype=bool)],
+                "pred_probs": probs[:, preds][np.eye(len(preds), dtype=bool)],
+            }
+        )
+
+    def predict(self, path=None, image=None):
+        if image is None:
+            image = tf.data.Dataset.from_tensor_slices([path])
+            image = self.data.test.preprocess(image, 1).batch(1)
+        elif image.ndim == 3:
+            image = image[np.newaxis, :]
+        return self.model.predict(image)
+
+    def show_predictions(
+        self,
+        mode="validation",
+        correct: bool = False,
+        ascending: bool = True,
+        cols: int = 8,
+        rows: int = 2,
+    ):
+        df = self.analyse_dataset(mode=mode)
+        df = df[(df.label == df.pred) if correct else (df.label != df.pred)]
+        df.sort_values(by=["label_probs"], ascending=ascending, inplace=True)
+        _, ax = plt.subplots(rows, cols, figsize=(3 * cols, 3.5 * rows))
+        for i, row in enumerate(df.head(cols * rows).itertuples()):
+            idx = (i // cols, i % cols) if rows > 1 else i % cols
+            ax[idx].axis("off")
+            ax[idx].imshow(row.image)
+            ax[idx].set_title(
+                f"{row.label}:{row.pred}\n{row.label_probs:.4f}:{row.pred_probs:.4f}"
+            )
 
     def show_history(self, contains, skip=0):
         history_df = pd.DataFrame(self.history.history)
