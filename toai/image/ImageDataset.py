@@ -22,6 +22,8 @@ class ImageDataset:
         prefetch: int = 1,
         num_parallel_calls: int = 1,
     ):
+        self.x = x
+        self.y = y
         self.length = len(y)
         self.batch_size = batch_size
         self.steps = math.ceil(self.length / self.batch_size)
@@ -29,19 +31,16 @@ class ImageDataset:
         self.n_classes = len(self.classes)
         self.img_dims = img_dims
         self.shuffle = shuffle
+        self.prefetch = prefetch
+        self.preprocess_pipeline = preprocess_pipeline
 
         image_ds = tf.data.Dataset.from_tensor_slices(x)
-
-        for fun in preprocess_pipeline:
-            image_ds = image_ds.map(fun, num_parallel_calls=num_parallel_calls)
-
-        label_ds = tf.data.Dataset.from_tensor_slices(y.astype(float))
+        image_ds = self.preprocess(image_ds, num_parallel_calls)
+        label_ds = tf.data.Dataset.from_tensor_slices(y)
         dataset = tf.data.Dataset.zip((image_ds, label_ds))
-
         if shuffle:
             dataset = dataset.shuffle(batch_size)
-
-        self.data = dataset.batch(batch_size).repeat().prefetch(prefetch)
+        self.data = dataset.repeat().batch(batch_size).prefetch(prefetch)
 
     @classmethod
     def from_df(
@@ -75,7 +74,7 @@ class ImageDataset:
                     f"No match found and no default value provided for value: {value}"
                 )
             paths.append(f"{path}/{value}")
-        return cls(np.asarray(paths), np.asarray(labels), *args, **kwargs)
+        return cls(np.asarray(paths), np.asarray(labels).astype(int), *args, **kwargs)
 
     def show(self, cols: int = 8, n_batches: int = 1):
         if cols >= self.batch_size * n_batches:
@@ -92,3 +91,9 @@ class ImageDataset:
                 ax[idx].imshow(x)
                 ax[idx].set_title(y)
                 i += 1
+
+    def preprocess(self, image_ds, num_parallel_calls):
+        for fun in self.preprocess_pipeline:
+            image_ds = image_ds.map(fun, num_parallel_calls=num_parallel_calls)
+
+        return image_ds
