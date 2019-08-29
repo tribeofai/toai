@@ -5,3 +5,4 @@ from .ImageDataset import ImageDataset
 from .ImageLearner import ImageLearner
 from .ImageParser import ImageParser
 from .ImageResizer import ImageResizer
+from .LearningRateFinder import LearningRateFinder
