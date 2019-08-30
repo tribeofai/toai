@@ -16,6 +16,7 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import requests
 import seaborn as sns
 import sklearn as sk
 from PIL import Image
