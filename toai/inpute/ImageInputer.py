@@ -1,12 +1,12 @@
 import os
-from typing import List, Optional
+from typing import List, Optional, Any
 
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class ImageInputer(BaseEstimator, TransformerMixin):
-    def __init__(self, value, columns: Optional[List[str]] = None):
+    def __init__(self, value: Any, columns: Optional[List[str]] = None):
         self.value = value
         self.columns = columns
 

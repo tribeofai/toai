@@ -1,7 +1,11 @@
 import os
 import shutil
+from typing import Optional
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import tensorflow as tf
 from tensorflow import keras
 
 from ..models import load_keras_model, save_keras_model
@@ -69,7 +73,7 @@ class ImageLearner:
         else:
             self.model = load_keras_model(self.architecture_path, self.weights_path)
 
-    def compile(self, optimizer, lr):
+    def compile(self, optimizer, lr: float):
         self.model.compile(
             optimizer=optimizer(lr),
             loss=keras.losses.sparse_categorical_crossentropy,
@@ -84,7 +88,7 @@ class ImageLearner:
         for layer in self.model.layers[:-1]:
             layer.trainable = True
 
-    def train(self, epochs, verbose=1):
+    def train(self, epochs: int, verbose: int = 1):
         reduce_lr_patience = max(2, epochs // 4)
         early_stopping_patience = reduce_lr_patience * 2
 
@@ -109,15 +113,15 @@ class ImageLearner:
         )
         self.load(weights_only=True)
 
-    def evaluate_dataset(self, mode="validation", verbose=1):
+    def evaluate_dataset(self, mode: str = "validation", verbose: int = 1):
         dataset = getattr(self.data, mode)
         return self.model.evaluate(dataset.data, steps=dataset.steps, verbose=verbose)
 
-    def predict_dataset(self, mode="validation", verbose=0):
+    def predict_dataset(self, mode: str = "validation", verbose: int = 0):
         dataset = getattr(self.data, mode)
         return self.model.predict(dataset.data, steps=dataset.steps, verbose=verbose)
 
-    def analyse_dataset(self, mode="validation", verbose=0):
+    def analyse_dataset(self, mode: str = "validation", verbose: int = 0):
         dataset = getattr(self.data, mode)
         image_ds = tf.data.Dataset.from_tensor_slices(dataset.x)
         image_ds = dataset.preprocess(image_ds, 1).batch(1)
@@ -137,7 +141,7 @@ class ImageLearner:
             }
         )
 
-    def predict(self, path=None, image=None):
+    def predict(self, path: Optional[str] = None, image=None):
         if image is None:
             image = tf.data.Dataset.from_tensor_slices([path])
             image = self.data.test.preprocess(image, 1).batch(1)
@@ -147,7 +151,7 @@ class ImageLearner:
 
     def show_predictions(
         self,
-        mode="validation",
+        mode: str = "validation",
         correct: bool = False,
         ascending: bool = True,
         cols: int = 8,
@@ -165,6 +169,6 @@ class ImageLearner:
                 f"{row.label}:{row.pred}\n{row.label_probs:.4f}:{row.pred_probs:.4f}"
             )
 
-    def show_history(self, contains, skip=0):
+    def show_history(self, contains: str, skip: int = 0):
         history_df = pd.DataFrame(self.history.history)
         history_df[list(history_df.filter(regex=contains))].iloc[skip:].plot()

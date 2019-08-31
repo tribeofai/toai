@@ -1,12 +1,14 @@
 import tempfile
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
 from tensorflow import keras
 
 
 class LearningRateFinder:
-    def __init__(self, model, stop_factor=4, beta=0.98):
+    def __init__(self, model: keras.Model, stop_factor: int = 4, beta: float = 0.98):
         self.model = model
         self.stop_factor = stop_factor
         self.beta = beta
@@ -50,14 +52,14 @@ class LearningRateFinder:
 
     def find(
         self,
-        x,
-        start_lr,
-        end_lr,
-        epochs=None,
-        steps_per_epoch=None,
-        batch_size=32,
-        sample_size=2048,
-        verbose=1,
+        x: tf.data.Dataset,
+        start_lr: float,
+        end_lr: float,
+        epochs: Optional[int] = None,
+        steps_per_epoch: Optional[int] = None,
+        batch_size: int = 32,
+        sample_size: int = 2048,
+        verbose: int = 1,
     ):
         self.reset()
         if epochs is None:
@@ -84,7 +86,9 @@ class LearningRateFinder:
         self.model.load_weights(self.weights_path)
         self.model.optimizer.lr = original_lr
 
-    def plot_loss(self, skip_begin=10, skip_end=1, title=None):
+    def plot_loss(
+        self, skip_begin: int = 10, skip_end: int = 1, title: Optional[str] = None
+    ):
         lrs = self.lrs[skip_begin:-skip_end]
         losses = self.losses[skip_begin:-skip_end]
 

@@ -7,7 +7,7 @@ import tensorflow as tf
 class ImageParser:
     n_channels: int = 3
 
-    def __call__(self, filename):
+    def __call__(self, filename: str):
         image = tf.image.decode_jpeg(
             tf.io.read_file(filename), channels=self.n_channels
         )

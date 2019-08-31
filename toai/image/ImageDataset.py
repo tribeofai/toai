@@ -20,7 +20,7 @@ class ImageDataset:
         preprocess_pipeline: List[Callable],
         shuffle: bool = False,
         prefetch: int = 1,
-        num_parallel_calls: int = 1,
+        num_parallel_calls: int = -1,
     ):
         self.x = x
         self.y = y
@@ -92,7 +92,9 @@ class ImageDataset:
                 ax[idx].set_title(y)
                 i += 1
 
-    def preprocess(self, image_ds, num_parallel_calls):
+    def preprocess(
+        self, image_ds: tf.data.Dataset, num_parallel_calls: int = -1
+    ) -> tf.data.Dataset:
         for fun in self.preprocess_pipeline:
             image_ds = image_ds.map(fun, num_parallel_calls=num_parallel_calls)
 
