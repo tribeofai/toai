@@ -1,3 +1,9 @@
 # To AI
 
-To AI builds on top of Tensorflow and provides utility and helper functions for the most common deep learning tasks.
+To AI provides convenient classes and functions for working with Jupyter notebooks, scikit-learn and Tensorflow models.
+
+## Install
+
+```
+pip install toai
+```
