@@ -13,6 +13,7 @@ from pathlib import Path
 
 import attr
 import joblib
+import kaggle
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

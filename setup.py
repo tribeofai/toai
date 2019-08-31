@@ -41,6 +41,7 @@ setup(
         "funcy",
         "imagehash",
         "joblib",
+        "kaggle",
         "lightgbm",
         "numpy",
         "pandas",
