@@ -47,6 +47,7 @@ setup(
         "pandas",
         "Pillow",
         "pyarrow",
+        "scikit-image",
         "scikit-learn",
         "scikit-optimize",
         "seaborn",
