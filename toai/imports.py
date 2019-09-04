@@ -1,15 +1,16 @@
-# pylama:ignore=W0611
+# pylama:ignore=W0611,W0401
 
 import copy
 import json
 import math
-import pickle
+import pickle  # nosec
 import re
 import shutil
 import time
 from collections import defaultdict, namedtuple
 from functools import partial, reduce
 from pathlib import Path
+from typing import *
 
 import attr
 import joblib
