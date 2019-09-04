@@ -7,6 +7,7 @@ import pickle  # nosec
 import re
 import shutil
 import time
+import warnings
 from collections import defaultdict, namedtuple
 from functools import partial, reduce
 from pathlib import Path
@@ -14,7 +15,6 @@ from typing import *
 
 import attr
 import joblib
-import kaggle
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -60,3 +60,8 @@ from sklearn.svm import SVC, SVR, LinearSVC, LinearSVR, OneClassSVM
 import lightgbm as lgb
 import skopt
 from fastprogress import master_bar, progress_bar
+
+try:
+    import kaggle
+except OSError as error:
+    warnings.warn(str(error))
