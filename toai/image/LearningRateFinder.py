@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+from typing import List
 
 
 class LearningRateFinder:
@@ -12,18 +13,18 @@ class LearningRateFinder:
         self.model = model
         self.stop_factor = stop_factor
         self.beta = beta
-        self.lrs = []
-        self.losses = []
-        self.lr_multiplier = 1
+        self.lrs: List[float] = []
+        self.losses: List[float] = []
+        self.lr_multiplier = 1.0
         self.avg_loss = 0
         self.best_loss = 1e9
         self.batch_num = 0
-        self.weights_path = None
+        self.weights_path: Optional[str] = None
 
     def reset(self):
         self.lrs = []
         self.losses = []
-        self.lr_multiplier = 1
+        self.lr_multiplier = 1.0
         self.avg_loss = 0
         self.best_loss = 1e9
         self.batch_num = 0
@@ -56,14 +57,14 @@ class LearningRateFinder:
         start_lr: float,
         end_lr: float,
         epochs: Optional[int] = None,
-        steps_per_epoch: Optional[int] = None,
+        steps_per_epoch: int = 1,
         batch_size: int = 32,
         sample_size: int = 2048,
         verbose: int = 1,
     ):
         self.reset()
         if epochs is None:
-            epochs = int(np.ceil(sample_size / float(steps_per_epoch)))
+            epochs = int(np.ceil(sample_size / steps_per_epoch))
 
         num_batch_updates = epochs * steps_per_epoch
 
