@@ -16,14 +16,22 @@ class Dataset:
         dataset: "Dataset",
         fracs: Union[List[float], Tuple[float]],
         random: Optional[bool] = True,
-    ) -> Tuple["Dataset", ...]:
+    ) -> Tuple["Dataset"]:
+        x = dataset.x
+        y = dataset.y
+
+        if random:
+            random_indices = np.random.permutation(len(dataset))
+            x = x[random_indices]
+            y = y[random_indices]
+
         result = []
         current_index = 0
         for frac in fracs:
             dx = math.ceil(len(dataset) * frac)
             split_dataset = cls(
-                x=dataset.x.iloc[current_index : current_index + dx],
-                y=dataset.y.iloc[current_index : current_index + dx],
+                x=x[current_index : current_index + dx],
+                y=y[current_index : current_index + dx],
             )
             result.append(split_dataset)
             current_index += dx
@@ -38,7 +46,3 @@ class Dataset:
 
     def __len__(self) -> int:
         return len(self.y)
-
-    @property
-    def length(self) -> int:
-        return len(self)

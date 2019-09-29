@@ -2,64 +2,36 @@ import math
 import os
 import re
 from pathlib import Path
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+import sklearn
 import tensorflow as tf
 
+from ..data import Dataset
+from ..utils import save_file, load_file
 
-class ImageDataset:
-    def __init__(
-        self,
-        x: np.ndarray,
-        y: np.ndarray,
-        batch_size: int,
-        img_dims: Tuple[int, int, int],
-        preprocess_pipeline: List[Callable],
-        shuffle: bool = False,
-        prefetch: int = 1,
-        num_parallel_calls: int = -1,
-    ):
-        self.x = x
-        self.y = y
-        self.length = len(y)
-        self.batch_size = batch_size
-        self.steps = math.ceil(self.length / self.batch_size)
-        self.classes = np.unique(y)
-        self.n_classes = len(self.classes)
-        self.img_dims = img_dims
-        self.shuffle = shuffle
-        self.prefetch = prefetch
-        self.preprocess_pipeline = preprocess_pipeline
 
-        image_ds = tf.data.Dataset.from_tensor_slices(x)
-        image_ds = self.preprocess(image_ds, num_parallel_calls)
-        label_ds = tf.data.Dataset.from_tensor_slices(y)
-        dataset = tf.data.Dataset.zip((image_ds, label_ds))
-        if shuffle:
-            dataset = dataset.shuffle(batch_size)
-        self.data = dataset.repeat().batch(batch_size).prefetch(prefetch)
-
+class ImageDataset(Dataset):
     @classmethod
-    def from_df(
-        cls, df: pd.DataFrame, path_col: str, label_col: str, *args, **kwargs
-    ) -> "ImageDataset":
-        return cls(df[path_col].values, df[label_col].values, *args, **kwargs)
+    def from_subfolders(cls, path: Union[Path, str]) -> "ImageDataset":
+        path = Path(path)
+        paths = []
+        labels = []
+        for label in os.listdir(path):
+            for image_path in os.listdir(path / label):
+                paths.append(str(path / label / image_path))
+                labels.append(label)
 
-    @classmethod
-    def from_subfolders(cls, path: Union[Path, str], *args, **kwargs) -> "ImageDataset":
-        pass
+        return cls(np.asarray(paths), np.asarray(labels))
 
     @classmethod
     def from_re(
         cls,
         path: Union[Path, str],
         regex: str,
-        default_label: Optional[str] = None,
-        *args,
-        **kwargs,
+        default: Optional[Union[int, float, str, bool]] = None,
     ) -> "ImageDataset":
         paths = []
         labels = []
@@ -67,14 +39,110 @@ class ImageDataset:
             match = re.match(regex, value)
             if match:
                 labels.append(match.group(1))
-            elif default_label:
-                labels.append(default_label)
+            elif default:
+                labels.append(default)
             else:
                 raise ValueError(
                     f"No match found and no default value provided for value: {value}"
                 )
             paths.append(f"{path}/{value}")
-        return cls(np.asarray(paths), np.asarray(labels).astype(int), *args, **kwargs)
+
+        return cls(np.asarray(paths), np.asarray(labels))
+
+    def dataset(
+        self,
+        batch_size: int,
+        img_dims: Tuple[int, int, int],
+        shuffle: bool = False,
+        prefetch: int = 1,
+        n_parallel_calls: int = -1,
+    ):
+        self.batch_size = batch_size
+        self.img_dims = img_dims
+        self.shuffle = shuffle
+        self.prefetch = prefetch
+        self.n_parallel_calls = n_parallel_calls
+        self.steps = math.ceil(len(self) / self.batch_size)
+        return self
+
+    def make_label_map(self) -> Dict[str, int]:
+        return {value: key for key, value in dict(enumerate(np.unique(self.y))).items()}
+
+    def make_label_scaler(self) -> Any:
+        label_scaler = sklearn.preprocessing.RobustScaler()
+        label_scaler.fit(self.y)
+        return label_scaler
+
+    def make_pipeline(
+        self,
+        regression: bool = False,
+        label_map: Optional[Dict[Union[str, int], int]] = None,
+        label_scaler: Optional[Any] = None,
+        image_pipeline: Optional[List[Callable]] = None,
+    ) -> "ImageDataset":
+        self.regression = regression
+        if self.regression:
+            self.label_scaler = self.label_scaler or self.make_label_scaler()
+        else:
+            self.label_map = label_map or self.make_label_map()
+            self.classes = list(self.label_map.keys())
+            self.n_classes = len(self.classes)
+
+        self.image_pipeline = image_pipeline or []
+        return self
+
+    def load_pipeline(
+        self, path: Union[Path, str], regression: bool = False
+    ) -> "ImageDataset":
+        path = Path(path)
+        self.regression = regression
+        if self.regression:
+            self.label_scaler = load_file(path / "label_scaler.pickle")
+        else:
+            self.label_map = load_file(path / "label_map.pickle")
+            self.classes = list(self.label_map.keys())
+            self.n_classes = len(self.classes)
+
+        self.image_pipeline = load_file(path / "image_pipeline.pickle")
+        return self
+
+    def save_pipeline(self, path: Union[Path, str]) -> "ImageDataset":
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+        if self.regression:
+            save_file(self.label_scaler, path / "label_scaler.pickle")
+        else:
+            save_file(self.label_map, path / "label_map.pickle")
+
+        save_file(self.image_pipeline, path / "image_pipeline.pickle")
+        return self
+
+    def preprocess_with_pipeline(
+        self, dataset: tf.data.Dataset, pipeline: List[Callable]
+    ) -> tf.data.Dataset:
+        for fun in pipeline:
+            dataset = dataset.map(fun, num_parallel_calls=self.n_parallel_calls)
+        return dataset
+
+    def preprocess(self) -> "ImageDataset":
+        if self.regression:
+            label_ds = tf.data.Dataset.from_tensor_slices(
+                self.label_scaler.transform(self.y)
+            )
+        else:
+            label_ds = tf.data.Dataset.from_tensor_slices(
+                np.asarray([self.label_map[label] for label in self.y])
+            )
+
+        image_ds = tf.data.Dataset.from_tensor_slices(self.x)
+
+        image_ds = self.preprocess_with_pipeline(image_ds, self.image_pipeline)
+
+        dataset = tf.data.Dataset.zip((image_ds, label_ds))
+        if self.shuffle:
+            dataset = dataset.shuffle(len(self))
+        self.data = dataset.repeat().batch(self.batch_size).prefetch(self.prefetch)
+        return self
 
     def show(self, cols: int = 8, n_batches: int = 1):
         if cols >= self.batch_size * n_batches:
@@ -91,11 +159,3 @@ class ImageDataset:
                 ax[idx].imshow(x)
                 ax[idx].set_title(y)
                 i += 1
-
-    def preprocess(
-        self, image_ds: tf.data.Dataset, num_parallel_calls: int = -1
-    ) -> tf.data.Dataset:
-        for fun in self.preprocess_pipeline:
-            image_ds = image_ds.map(fun, num_parallel_calls=num_parallel_calls)
-
-        return image_ds
