@@ -6,7 +6,7 @@ import pandas as pd
 
 
 class Dataset:
-    def __init__(self, x: np.array, y: np.array):
+    def __init__(self, x: np.ndarray, y: np.ndarray):
         self.x = x
         self.y = y
 

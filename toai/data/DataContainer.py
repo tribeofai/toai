@@ -1,8 +1,10 @@
-from typing import Any
+import attr
+
+from .Dataset import Dataset
 
 
+@attr.s(auto_attribs=True)
 class DataContainer:
-    def __init__(self, train: Any, validation: Any, test: Any):
-        self.train = train
-        self.validation = validation
-        self.test = test
+    train: Dataset
+    validation: Dataset
+    test: Dataset

@@ -8,7 +8,7 @@ from tensorflow import keras
 class ImageTrainingStep:
     n_epochs: int
     lr: float
-    optimizer: keras.optimizers
+    optimizer: keras.optimizers.Optimizer
     freeze: bool = False
     feature_pipeline: List[Callable] = []
     label_pipeline: List[Callable] = []

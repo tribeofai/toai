@@ -91,7 +91,7 @@ class ImageLearner:
         else:
             self.model = load_keras_model(self.architecture_path, self.weights_path)
 
-    def compile(self, optimizer: keras.optimizers, lr: float):
+    def compile(self, optimizer: keras.optimizers.Optimizer, lr: float):
         self.model.compile(
             optimizer=optimizer(lr), loss=self.loss, metrics=self.metrics
         )
@@ -135,7 +135,7 @@ class ImageLearner:
         )
         self.load(weights_only=True)
 
-    def predict(self, path: Optional[str] = None, image=None):
+    def predict(self, path: Optional[str] = None, image=None) -> np.ndarray:
         if image is None:
             image = tf.data.Dataset.from_tensor_slices([path])
             image = self.data.test.preprocess(image, 1).batch(1)

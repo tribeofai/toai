@@ -11,7 +11,7 @@ class ImageResizer:
     resize: Optional[str] = None
     crop_adjustment: float = 1
 
-    def __call__(self, image):
+    def __call__(self, image: tf.Tensor) -> tf.Tensor:
         height, width, _ = self.img_dims
         if self.resize == "stretch":
             image = tf.image.resize(image, (height, width))

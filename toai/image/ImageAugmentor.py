@@ -8,7 +8,7 @@ class ImageAugmentor:
     level: int = 0
     flips: Optional[str] = None
 
-    def __call__(self, image):
+    def __call__(self, image: tf.Tensor) -> tf.Tensor:
         if self.flips in ["horizontal", "both"]:
             image = tf.image.random_flip_left_right(image)
         if self.flips in ["vertical", "both"]:
