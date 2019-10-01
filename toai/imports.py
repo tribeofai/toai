@@ -18,6 +18,7 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import pandas_profiling
 import requests
 import seaborn as sns
 import sklearn as sk

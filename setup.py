@@ -44,6 +44,7 @@ setup(
         "kaggle",
         "lightgbm",
         "numpy",
+        "pandas-profiling",
         "pandas",
         "Pillow",
         "pyarrow",
