@@ -7,7 +7,7 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
-from ..data import Dataset
+from .ImageDataset import ImageDataset
 from ..models import load_keras_model, save_keras_model
 
 
@@ -106,8 +106,8 @@ class ImageLearner:
 
     def fit(
         self,
-        train_dataset: Dataset,
-        validation_dataset: Dataset,
+        train_dataset: ImageDataset,
+        validation_dataset: ImageDataset,
         epochs: int,
         verbose: int = 1,
     ):
@@ -135,10 +135,14 @@ class ImageLearner:
         )
         self.load(weights_only=True)
 
-    def predict(self, path: Optional[str] = None, image=None) -> np.ndarray:
+    def predict(
+        self, pipeline: List[Callable], path: Optional[str] = None, image=None
+    ) -> np.ndarray:
         if image is None:
             image = tf.data.Dataset.from_tensor_slices([path])
-            image = self.data.test.preprocess(image, 1).batch(1)
+            for fun in pipeline:
+                image = image.map(fun, num_parallel_calls=1)
+            image = image.batch(1)
         elif image.ndim == 3:
             image = image[np.newaxis, :]
         return self.model.predict(image)
