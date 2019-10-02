@@ -144,18 +144,22 @@ class ImageDataset(Dataset):
         self.data = dataset.repeat().batch(self.batch_size).prefetch(self.prefetch)
         return self
 
-    def show(self, cols: int = 8, n_batches: int = 1):
+    def show(self, cols: int = 8, n_batches: int = 1, debug: bool = False):
         if cols >= self.batch_size * n_batches:
             cols = self.batch_size * n_batches
             rows = 1
         else:
             rows = math.ceil(self.batch_size * n_batches / cols)
-        _, ax = plt.subplots(rows, cols, figsize=(3 * cols, 3 * rows))
+
+        figsize = (3 * cols, 4 * rows) if debug else (3 * cols, 3 * rows)
+        _, ax = plt.subplots(rows, cols, figsize=figsize)
+
         i = 0
         for x_batch, y_batch in self.data.take(n_batches):
             for (x, y) in zip(x_batch.numpy(), y_batch.numpy()):
                 idx = (i // cols, i % cols) if rows > 1 else i % cols
                 ax[idx].axis("off")
                 ax[idx].imshow(x)
-                ax[idx].set_title(y)
+                title = f"Label: {y}\nSize: {x.shape}\n" if debug else y
+                ax[idx].set_title(title)
                 i += 1
