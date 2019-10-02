@@ -40,7 +40,7 @@ class ImageDataset(Dataset):
             if match:
                 labels.append(match.group(1))
             elif default:
-                labels.append(default)
+                labels.append(str(default))
             else:
                 raise ValueError(
                     f"No match found and no default value provided for value: {value}"
