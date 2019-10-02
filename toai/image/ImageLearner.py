@@ -1,14 +1,14 @@
 import os
 import shutil
-from typing import Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
-from .ImageDataset import ImageDataset
 from ..models import load_keras_model, save_keras_model
+from .ImageDataset import ImageDataset
 
 
 class ImageLearner:
