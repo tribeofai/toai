@@ -16,7 +16,7 @@ class Dataset:
         dataset: "Dataset",
         fracs: Union[List[float], Tuple[float]],
         random: Optional[bool] = True,
-    ) -> Tuple["Dataset"]:
+    ) -> Tuple["Dataset", ...]:
         x = dataset.x
         y = dataset.y
 
