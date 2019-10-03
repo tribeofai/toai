@@ -160,6 +160,6 @@ class ImageDataset(Dataset):
                 idx = (i // cols, i % cols) if rows > 1 else i % cols
                 ax[idx].axis("off")
                 ax[idx].imshow(x)
-                title = f"Label: {y}\nSize: {x.shape}\n" if debug else y
+                title = f"Label: {y}\nShape: {x.shape}\n" if debug else y
                 ax[idx].set_title(title)
                 i += 1
