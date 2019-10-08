@@ -1,6 +1,7 @@
 import os
 import shutil
-from typing import Callable, List, Optional
+from pathlib import Path
+from typing import Callable, Dict, Iterable, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -14,18 +15,20 @@ from .ImageDataset import ImageDataset
 class ImageLearner:
     def __init__(
         self,
-        path,
-        base_model,
-        input_shape,
-        output_shape,
-        activation,
-        loss,
-        metrics,
-        dropout=0.0,
-        l1=None,
-        l2=None,
-        override=False,
-        load=False,
+        path: Union[Path, str],
+        base_model: keras.Model,
+        input_shape: Iterable[int],
+        output_shape: Iterable[int],
+        activation: Union[str, Callable],
+        loss: Union[str, Callable],
+        metrics: List[Callable],
+        dropout: float = 0.0,
+        l1: Optional[float] = None,
+        l2: Optional[float] = None,
+        override: bool = False,
+        load: bool = False,
+        class_weight: Optional[Dict[int, float]] = None,
+        sample_weight: Optional[np.ndarray] = None,
     ):
         self.path = str(path)
         self.weights_path = f"{self.path}/weights.h5"
@@ -40,6 +43,8 @@ class ImageLearner:
         self.dropout = dropout
         self.l1 = l1
         self.l2 = l2
+        self.class_weight = class_weight
+        self.sample_weight = sample_weight
 
         self.base_model = base_model(include_top=False, input_shape=input_shape)
         x = keras.layers.concatenate(
@@ -132,6 +137,8 @@ class ImageLearner:
                 ),
             ],
             verbose=verbose,
+            class_weight=self.class_weight,
+            sample_weight=self.sample_weight,
         )
         self.load(weights_only=True)
 
