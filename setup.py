@@ -43,6 +43,7 @@ setup(
         "joblib",
         "kaggle",
         "lightgbm",
+        "matplotlib",
         "numpy",
         "pandas-profiling",
         "pandas",
