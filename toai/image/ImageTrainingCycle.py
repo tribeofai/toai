@@ -5,7 +5,7 @@ from tensorflow import keras
 
 
 @attr.s(auto_attribs=True)
-class ImageTrainingStep:
+class ImageTrainingCycle:
     n_epochs: int
     lr: float
     optimizer: keras.optimizers.Optimizer

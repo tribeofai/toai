@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-from .ImageTrainingStep import ImageTrainingStep
+from .ImageTrainingCycle import ImageTrainingCycle
 from .ImageLearner import ImageLearner
 from ..data import DataContainer
 
@@ -16,18 +16,20 @@ from ..data import DataContainer
 class ImageTrainer:
     learner: ImageLearner
     data_container: DataContainer
-    steps: List[ImageTrainingStep]
+    cycles: List[ImageTrainingCycle]
     template: str = "Name: {} Train Time: {:.1f} min. Eval Time: {:.2f}s Loss: {:.4f} Accuracy: {:.2%}"
 
     def train(self):
         start_time = time.time()
-        for step in self.steps:
-            self.learner.freeze() if step.freeze else self.learner.unfreeze()
-            self.learner.compile(optimizer=step.optimizer, lr=step.lr)
-            self.data_container.train.image_pipeline = step.feature_pipeline
+        for cycle in self.cycles:
+            self.learner.freeze() if cycle.freeze else self.learner.unfreeze()
+            self.learner.compile(optimizer=cycle.optimizer, lr=cycle.lr)
+            self.data_container.train.image_pipeline = cycle.feature_pipeline
             self.data_container.train.preprocess()
             self.learner.fit(
-                self.data_container.train, self.data_container.validation, step.n_epochs
+                self.data_container.train,
+                self.data_container.validation,
+                cycle.n_epochs,
             )
         end_time = time.time()
 
