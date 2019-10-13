@@ -46,3 +46,7 @@ class Dataset:
 
     def __len__(self) -> int:
         return len(self.y)
+
+    def value_counts(self) -> Dict[str, int]:
+        values, counts = np.unique(self.y, return_counts=True)
+        return dict(zip(values.tolist(), counts.tolist()))
