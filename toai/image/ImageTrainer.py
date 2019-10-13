@@ -26,7 +26,7 @@ class ImageTrainer:
         ),
     ):
         start_time = time.time()
-        for cycle in self.cycles:
+        for cycle in cycles:
             self.learner.freeze() if cycle.freeze else self.learner.unfreeze()
             self.learner.compile(optimizer=cycle.optimizer, lr=cycle.lr)
             self.data_container.train.image_pipeline = cycle.feature_pipeline
@@ -44,7 +44,7 @@ class ImageTrainer:
 
         print("-".center(80, "-"))
         print(
-            self.template.format(
+            template.format(
                 self.learner.base_model.name,
                 (end_time - start_time) / 60,
                 (eval_end_time - eval_start_time),
