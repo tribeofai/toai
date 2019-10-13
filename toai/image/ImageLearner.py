@@ -47,14 +47,14 @@ class ImageLearner:
         self.sample_weight = sample_weight
 
         self.base_model = base_model(include_top=False, input_shape=input_shape)
-        x = keras.layers.concatenate(
+        self.concat_layer = keras.layers.concatenate(
             [
                 keras.layers.GlobalAvgPool2D()(self.base_model.output),
                 keras.layers.GlobalMaxPool2D()(self.base_model.output),
             ]
         )
-        x = keras.layers.BatchNormalization()(x)
-        x = keras.layers.Dropout(dropout)(x)
+        self.bn_layer = keras.layers.BatchNormalization()(self.concat_layer)
+        self.dropout_layer = keras.layers.Dropout(dropout)(self.bn_layer)
 
         if self.l1 is not None and self.l2 is not None:
             kernel_regularizer = keras.regularizers.l1_l2(self.l1, self.l2)
@@ -65,16 +65,18 @@ class ImageLearner:
         else:
             kernel_regularizer = None
 
-        outputs = [
+        self.output_layers = [
             keras.layers.Dense(
                 output_size,
                 kernel_regularizer=kernel_regularizer,
                 activation=activation,
-            )(x)
+            )(self.dropout_layer)
             for output_size in self.output_shape
         ]
 
-        self.model = keras.Model(inputs=self.base_model.inputs, outputs=outputs)
+        self.model = keras.Model(
+            inputs=self.base_model.inputs, outputs=self.output_layers
+        )
 
         if os.path.exists(self.path):
             if load:
@@ -143,16 +145,17 @@ class ImageLearner:
         self.load(weights_only=True)
 
     def predict(
-        self, pipeline: List[Callable], path: Optional[str] = None, image=None
+        self,
+        pipeline: List[Callable],
+        image_paths: Optional[Iterable[str]] = None,
+        images: Optional[np.ndarray] = None,
     ) -> np.ndarray:
-        if image is None:
-            image = tf.data.Dataset.from_tensor_slices([path])
-            for fun in pipeline:
-                image = image.map(fun, num_parallel_calls=1)
-            image = image.batch(1)
-        elif image.ndim == 3:
-            image = image[np.newaxis, :]
-        return self.model.predict(image)
+        if images is None:
+            images = tf.data.Dataset.from_tensor_slices(image_paths)
+        for fun in pipeline:
+            images = images.map(fun, num_parallel_calls=1)
+        images = images.batch(1)
+        return self.model.predict(images)
 
     def show_history(self, contains: str, skip: int = 0):
         history_df = pd.DataFrame(self.history.history)
