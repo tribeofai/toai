@@ -1,5 +1,5 @@
 import time
-from typing import List
+from typing import Iterable
 
 import attr
 import matplotlib.pyplot as plt
@@ -16,10 +16,15 @@ from ..data import DataContainer
 class ImageTrainer:
     learner: ImageLearner
     data_container: DataContainer
-    cycles: List[ImageTrainingCycle]
-    template: str = "Name: {} Train Time: {:.1f} min. Eval Time: {:.2f}s Loss: {:.4f} Accuracy: {:.2%}"
 
-    def train(self):
+    def train(
+        self,
+        cycles: Iterable[ImageTrainingCycle],
+        template: str = (
+            "Name: {} Train Time: {:.1f} min. "
+            "Eval Time: {:.2f}s Loss: {:.4f} Accuracy: {:.2%}"
+        ),
+    ):
         start_time = time.time()
         for cycle in self.cycles:
             self.learner.freeze() if cycle.freeze else self.learner.unfreeze()
