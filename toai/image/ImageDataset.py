@@ -54,7 +54,7 @@ class ImageDataset(Dataset):
         batch_size: int,
         img_dims: Tuple[int, int, int],
         shuffle: bool = False,
-        prefetch: int = 1,
+        prefetch: int = tf.data.experimental.AUTOTUNE,
         n_parallel_calls: int = -1,
     ):
         self.batch_size = batch_size
