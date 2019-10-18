@@ -9,13 +9,13 @@ import tensorflow as tf
 
 from .ImageTrainingCycle import ImageTrainingCycle
 from .ImageLearner import ImageLearner
-from ..data import DataContainer
+from .ImageDataContainer import ImageDataContainer
 
 
 @attr.s(auto_attribs=True)
 class ImageTrainer:
     learner: ImageLearner
-    data_container: DataContainer
+    data_container: ImageDataContainer
 
     def train(
         self,
