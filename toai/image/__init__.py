@@ -1,6 +1,7 @@
 # pylama:ignore=W0611
 
 from .ImageAugmentor import ImageAugmentor
+from .ImageDataContainer import ImageDataContainer
 from .ImageDataset import ImageDataset
 from .ImageLearner import ImageLearner
 from .ImageParser import ImageParser

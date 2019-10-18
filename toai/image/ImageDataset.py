@@ -77,12 +77,12 @@ class ImageDataset(Dataset):
         self,
         regression: bool = False,
         label_map: Optional[Dict[Union[str, int], int]] = None,
-        label_scaler: Optional[Any] = None,
+        label_scaler: Optional[sklearn.base.BaseEstimator] = None,
         image_pipeline: Optional[List[Callable]] = None,
     ) -> "ImageDataset":
         self.regression = regression
         if self.regression:
-            self.label_scaler = self.label_scaler or self.make_label_scaler()
+            self.label_scaler = label_scaler or self.make_label_scaler()
         else:
             self.label_map = label_map or self.make_label_map()
             self.classes = list(self.label_map.keys())
