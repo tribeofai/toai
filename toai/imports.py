@@ -18,7 +18,6 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pandas_profiling
 import requests
 import seaborn as sns
 import sklearn as sk
@@ -59,8 +58,11 @@ from sklearn.preprocessing import (
 from sklearn.svm import SVC, SVR, LinearSVC, LinearSVR, OneClassSVM
 
 import lightgbm as lgb
+import pandas_profiling
 import skopt
 from fastprogress import master_bar, progress_bar
+
+from .metrics import error_rate
 
 try:
     import kaggle
