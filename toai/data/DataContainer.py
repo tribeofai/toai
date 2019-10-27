@@ -1,10 +1,10 @@
 import attr
 
-from .Dataset import Dataset
+from .DataBundle import DataBundle
 
 
 @attr.s(auto_attribs=True)
 class DataContainer:
-    train: Dataset
-    validation: Dataset
-    test: Dataset
+    train: DataBundle
+    validation: DataBundle
+    test: DataBundle

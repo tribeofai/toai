@@ -9,13 +9,13 @@ import numpy as np
 import sklearn
 import tensorflow as tf
 
-from ..data import Dataset
+from ..data import DataBundle
 from ..utils import save_file, load_file
 
 
-class ImageDataset(Dataset):
+class ImageDataBundle(DataBundle):
     @classmethod
-    def from_subfolders(cls, path: Union[Path, str]) -> "ImageDataset":
+    def from_subfolders(cls, path: Union[Path, str]) -> "ImageDataBundle":
         path = Path(path)
         paths = []
         labels = []
@@ -32,7 +32,7 @@ class ImageDataset(Dataset):
         path: Union[Path, str],
         regex: str,
         default: Optional[Union[int, float, str, bool]] = None,
-    ) -> "ImageDataset":
+    ) -> "ImageDataBundle":
         paths = []
         labels = []
         for value in os.listdir(path):
@@ -79,7 +79,7 @@ class ImageDataset(Dataset):
         label_map: Optional[Dict[Union[str, int], int]] = None,
         label_scaler: Optional[sklearn.base.BaseEstimator] = None,
         image_pipeline: Optional[List[Callable]] = None,
-    ) -> "ImageDataset":
+    ) -> "ImageDataBundle":
         self.regression = regression
         if self.regression:
             self.label_scaler = label_scaler or self.make_label_scaler()
@@ -93,7 +93,7 @@ class ImageDataset(Dataset):
 
     def load_pipeline(
         self, path: Union[Path, str], regression: bool = False
-    ) -> "ImageDataset":
+    ) -> "ImageDataBundle":
         path = Path(path)
         self.regression = regression
         if self.regression:
@@ -106,7 +106,7 @@ class ImageDataset(Dataset):
         self.image_pipeline = load_file(path / "image_pipeline.pickle")
         return self
 
-    def save_pipeline(self, path: Union[Path, str]) -> "ImageDataset":
+    def save_pipeline(self, path: Union[Path, str]) -> "ImageDataBundle":
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
         if self.regression:
@@ -118,13 +118,13 @@ class ImageDataset(Dataset):
         return self
 
     def preprocess_with_pipeline(
-        self, dataset: tf.data.Dataset, pipeline: List[Callable]
+        self, data_bundle: tf.data.Dataset, pipeline: List[Callable]
     ) -> tf.data.Dataset:
         for fun in pipeline:
-            dataset = dataset.map(fun, num_parallel_calls=self.n_parallel_calls)
-        return dataset
+            data_bundle = data_bundle.map(fun, num_parallel_calls=self.n_parallel_calls)
+        return data_bundle
 
-    def preprocess(self) -> "ImageDataset":
+    def preprocess(self) -> "ImageDataBundle":
         if self.regression:
             label_ds = tf.data.Dataset.from_tensor_slices(
                 self.label_scaler.transform(self.y)
@@ -138,10 +138,10 @@ class ImageDataset(Dataset):
 
         image_ds = self.preprocess_with_pipeline(image_ds, self.image_pipeline)
 
-        dataset = tf.data.Dataset.zip((image_ds, label_ds))
+        data_bundle = tf.data.Dataset.zip((image_ds, label_ds))
         if self.shuffle:
-            dataset = dataset.shuffle(len(self))
-        self.data = dataset.repeat().batch(self.batch_size).prefetch(self.prefetch)
+            data_bundle = data_bundle.shuffle(len(self))
+        self.data = data_bundle.repeat().batch(self.batch_size).prefetch(self.prefetch)
         return self
 
     def show(self, cols: int = 8, n_batches: int = 1, debug: bool = False):

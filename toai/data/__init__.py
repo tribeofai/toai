@@ -2,5 +2,5 @@
 
 from .DataContainer import DataContainer
 from .DataParams import DataParams
-from .Dataset import Dataset
+from .DataBundle import DataBundle
 from .utils import split_df

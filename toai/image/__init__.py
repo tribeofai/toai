@@ -2,7 +2,7 @@
 
 from .ImageAugmentor import ImageAugmentor
 from .ImageDataContainer import ImageDataContainer
-from .ImageDataset import ImageDataset
+from .ImageDataBundle import ImageDataBundle
 from .ImageLearner import ImageLearner
 from .ImageParser import ImageParser
 from .ImageResizer import ImageResizer

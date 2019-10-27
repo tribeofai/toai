@@ -39,7 +39,7 @@ class ImageTrainer:
         end_time = time.time()
 
         eval_start_time = time.time()
-        evaluation_results = self.evaluate_dataset(verbose=0)
+        evaluation_results = self.evaluate_data_bundle(verbose=0)
         eval_end_time = time.time()
 
         print("-".center(80, "-"))
@@ -53,41 +53,44 @@ class ImageTrainer:
         )
         print("-".center(80, "-"))
 
-    def evaluate_dataset(self, mode: str = "validation", verbose: int = 1):
-        dataset = getattr(self.data_container, mode)
+    def evaluate_data_bundle(self, mode: str = "validation", verbose: int = 1):
+        data_bundle = getattr(self.data_container, mode)
         return self.learner.model.evaluate(
-            dataset.data, steps=dataset.steps, verbose=verbose
+            data_bundle.data, steps=data_bundle.steps, verbose=verbose
         )
 
-    def predict_dataset(self, mode: str = "validation", verbose: int = 0):
-        dataset = getattr(self.data_container, mode)
+    def predict_data_bundle(self, mode: str = "validation", verbose: int = 0):
+        data_bundle = getattr(self.data_container, mode)
         return self.learner.model.predict(
-            dataset.data, steps=dataset.steps, verbose=verbose
+            data_bundle.data, steps=data_bundle.steps, verbose=verbose
         )
 
-    def analyse_dataset(self, mode: str = "validation", verbose: int = 0):
-        dataset = getattr(self.data_container, mode)
-        image_ds = tf.data.Dataset.from_tensor_slices(dataset.x)
-        image_ds = dataset.preprocess_with_pipeline(
-            image_ds, dataset.image_pipeline
+    def analyse_data_bundle(self, mode: str = "validation", verbose: int = 0):
+        data_bundle = getattr(self.data_container, mode)
+        image_ds = tf.data.Dataset.from_tensor_slices(data_bundle.x)
+        image_ds = data_bundle.preprocess_with_pipeline(
+            image_ds, data_bundle.image_pipeline
         ).batch(1)
         images = [
-            img[0].numpy() for img in image_ds.take(dataset.steps * dataset.batch_size)
+            img[0].numpy()
+            for img in image_ds.take(data_bundle.steps * data_bundle.batch_size)
         ]
         probs = self.learner.model.predict(image_ds)
         pred_code = probs.argmax(axis=1)
-        label_code = [dataset.label_map[label] for label in dataset.y]
-        inverse_label_map = {value: key for key, value in dataset.label_map.items()}
+        label_code = [data_bundle.label_map[label] for label in data_bundle.y]
+        inverse_label_map = {value: key for key, value in data_bundle.label_map.items()}
         pred = [inverse_label_map[x] for x in pred_code]
         return pd.DataFrame.from_dict(
             {
-                "path": dataset.x,
+                "path": data_bundle.x,
                 "image": images,
-                "label": dataset.y,
+                "label": data_bundle.y,
                 "label_code": label_code,
                 "pred": pred,
                 "pred_code": pred_code,
-                "label_probs": probs[:, label_code][np.eye(len(dataset.y), dtype=bool)],
+                "label_probs": probs[:, label_code][
+                    np.eye(len(data_bundle.y), dtype=bool)
+                ],
                 "pred_probs": probs[:, pred_code][np.eye(len(pred_code), dtype=bool)],
             }
         )
@@ -100,7 +103,7 @@ class ImageTrainer:
         cols: int = 8,
         rows: int = 2,
     ):
-        df = self.analyse_dataset(mode=mode)
+        df = self.analyse_data_bundle(mode=mode)
         df = df[(df.label == df.pred) if correct else (df.label != df.pred)]
         df.sort_values(by=["label_probs"], ascending=ascending, inplace=True)
         _, ax = plt.subplots(rows, cols, figsize=(3 * cols, 3.5 * rows))

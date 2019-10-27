@@ -1,11 +1,11 @@
 import attr
 
 from ..data import DataContainer
-from .ImageDataset import ImageDataset
+from .ImageDataBundle import ImageDataBundle
 
 
 @attr.s(auto_attribs=True)
 class ImageDataContainer(DataContainer):
-    train: ImageDataset
-    validation: ImageDataset
-    test: ImageDataset
+    train: ImageDataBundle
+    validation: ImageDataBundle
+    test: ImageDataBundle
