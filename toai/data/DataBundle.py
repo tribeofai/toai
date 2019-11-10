@@ -1,5 +1,5 @@
 import math
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Sequence
 
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ class DataBundle:
     def split(
         cls,
         data_bundle: "DataBundle",
-        fracs: Union[List[float], Tuple[float]],
+        fracs: Sequence[float],
         random: Optional[bool] = True,
     ) -> Tuple["DataBundle", ...]:
         x = data_bundle.x
