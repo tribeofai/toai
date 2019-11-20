@@ -11,6 +11,20 @@ class DataBundle:
         self.y = y
 
     @classmethod
+    def from_unbalanced_data_bundle(cls, data_bundle: "DataBundle") -> "DataBundle":
+        values, counts = np.unique(data_bundle.y, return_counts=True)
+        max_count = counts.max()
+        x = []
+        y = []
+        for value, count in zip(values, counts):
+            indices = np.argwhere(data_bundle.y == value)
+            for _ in range(max_count // count):
+                x.append(data_bundle.x[indices].flatten())
+                y.append(data_bundle.y[indices].flatten())
+
+        return cls(np.concatenate(x), np.concatenate(y))
+
+    @classmethod
     def split(
         cls,
         data_bundle: "DataBundle",
