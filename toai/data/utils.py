@@ -18,3 +18,13 @@ def split_df(
     for df in train_data, val_data, test_data:
         df.reset_index(drop=True, inplace=True)
     return train_data, val_data, test_data
+
+
+def balance_df_labels(df: pd.DataFrame, col_name: str) -> pd.DataFrame:
+    max_value = df[col_name].value_counts().max()
+    result = [
+        df[df[col_name] == value]
+        for value, count in df[col_name].value_counts().items()
+        for _ in range(max_value // count)
+    ]
+    return pd.concat(result).reset_index(drop=True)
