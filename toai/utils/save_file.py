@@ -1,6 +1,8 @@
 import pickle  # nosec
+from typing import Any, Union
+from pathlib import Path
 
 
-def save_file(obj, filename, mode="wb"):
-    with open(filename, mode=mode) as f:
+def save_file(obj: Any, filename: Union[Path, str], mode: str = "wb") -> None:
+    with open(str(filename), mode=mode) as f:
         pickle.dump(obj, f)
