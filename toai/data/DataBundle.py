@@ -3,6 +3,7 @@ from typing import Dict, Optional, Tuple, Sequence
 
 import numpy as np
 import pandas as pd
+import sklearn
 
 
 class DataBundle:
@@ -11,7 +12,7 @@ class DataBundle:
         self.y = y
 
     @classmethod
-    def from_unbalanced_data_bundle(cls, data_bundle: "DataBundle") -> "DataBundle":
+    def from_unbalanced(cls, data_bundle: "DataBundle") -> "DataBundle":
         values, counts = np.unique(data_bundle.y, return_counts=True)
         max_count = counts.max()
         x = []
@@ -64,3 +65,11 @@ class DataBundle:
     def value_counts(self) -> Dict[str, int]:
         values, counts = np.unique(self.y, return_counts=True)
         return dict(zip(values.tolist(), counts.tolist()))
+
+    def make_label_map(self) -> Dict[str, int]:
+        return {value: key for key, value in dict(enumerate(np.unique(self.y))).items()}
+
+    def make_label_scaler(self) -> sklearn.base.BaseEstimator:
+        scaler = sklearn.preprocessing.RobustScaler()
+        scaler.fit(self.y)
+        return scaler
