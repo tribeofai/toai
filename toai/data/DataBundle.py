@@ -67,7 +67,10 @@ class DataBundle:
         return dict(zip(values.tolist(), counts.tolist()))
 
     def make_label_map(self) -> Dict[str, int]:
-        return {value: key for key, value in dict(enumerate(np.unique(self.y))).items()}
+        return {value: key for key, value in enumerate(np.unique(self.y))}
+
+    def apply_label_map(self, label_map: Dict[str, int]) -> None:
+        self.y = np.vectorize(label_map.get)(self.y)
 
     def make_label_scaler(self) -> sklearn.base.BaseEstimator:
         scaler = sklearn.preprocessing.RobustScaler()
