@@ -44,6 +44,3 @@ class ImageDataBundle(DataBundle):
             paths.append(f"{path}/{value}")
 
         return cls(np.asarray(paths), np.asarray(labels))
-
-    def to_dataset(self) -> tf.data.Dataset:
-        return tf.data.Dataset.from_tensor_slices((self.x, self.y))
