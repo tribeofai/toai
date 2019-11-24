@@ -10,13 +10,13 @@ from sklearn.metrics import classification_report
 
 from .ImageTrainingCycle import ImageTrainingCycle
 from .ImageLearner import ImageLearner
-from .ImageDataContainer import ImageDataContainer
+from ..data import DataContainer
 
 
 @attr.s(auto_attribs=True)
 class ImageTrainer:
     learner: ImageLearner
-    data_container: ImageDataContainer
+    data_container: DataContainer
 
     def train(
         self,
