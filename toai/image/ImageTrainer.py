@@ -1,5 +1,5 @@
 import time
-from typing import Iterable
+from typing import Iterable, Optional
 
 import attr
 import matplotlib.pyplot as plt
@@ -31,11 +31,11 @@ class ImageTrainer:
             self.learner.freeze() if cycle.freeze else self.learner.unfreeze()
             self.learner.compile(optimizer=cycle.optimizer, lr=cycle.lr)
             self.learner.fit(
+                cycle.n_epochs,
                 cycle.data,
                 cycle.steps,
                 self.data_container.validation,
                 self.data_container.validation_steps,
-                cycle.n_epochs,
             )
         end_time = time.time()
 
@@ -58,19 +58,27 @@ class ImageTrainer:
         )
         print("-".center(80, "-"))
 
-    def evaluate(self, dataset: tf.data.Dataset, steps: int, verbose: int = 1):
+    def evaluate(
+        self, dataset: tf.data.Dataset, steps: Optional[int] = None, verbose: int = 1
+    ):
         return self.learner.model.evaluate(dataset, steps=steps, verbose=verbose)
 
-    def predict(self, dataset: tf.data.Dataset, steps: int, verbose: int = 0):
+    def predict(
+        self, dataset: tf.data.Dataset, steps: Optional[int] = None, verbose: int = 0
+    ):
         return self.learner.model.predict(dataset, steps=steps, verbose=verbose)
 
-    def report(self, dataset: tf.data.Dataset, steps: int, verbose: int = 0):
+    def report(
+        self, dataset: tf.data.Dataset, steps: Optional[int] = None, verbose: int = 0
+    ):
         return classification_report(
             [label.numpy() for _, label in dataset.take(steps).unbatch()],
             self.learner.model.predict(dataset, steps=steps).argmax(axis=1),
         )
 
-    def analyse(self, dataset: tf.data.Dataset, steps: int, verbose: int = 0):
+    def analyse(
+        self, dataset: tf.data.Dataset, steps: Optional[int] = None, verbose: int = 0
+    ):
         reverse_label_map = {
             value: key for key, value in self.data_container.label_map.items()
         }

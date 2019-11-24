@@ -112,11 +112,11 @@ class ImageLearner:
 
     def fit(
         self,
+        epochs: int,
         train_dataset: tf.data.Dataset,
         train_dataset_steps: int,
         validation_dataset: tf.data.Dataset,
-        validation_dataset_steps: int,
-        epochs: int,
+        validation_dataset_steps: Optional[int] = None,
         verbose: int = 1,
     ):
         reduce_lr_patience = max(2, epochs // 4)

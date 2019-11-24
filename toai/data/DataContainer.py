@@ -7,13 +7,13 @@ class DataContainer:
     def __init__(
         self,
         base: tf.data.Dataset,
+        label_map: Dict[str, int],
         train: Optional[tf.data.Dataset] = None,
         train_steps: Optional[int] = None,
         validation: Optional[tf.data.Dataset] = None,
         validation_steps: Optional[int] = None,
         test: Optional[tf.data.Dataset] = None,
         test_steps: Optional[int] = None,
-        label_map: Optional[Dict[str, int]] = None,
         n_classes: Optional[int] = None,
     ):
         self.base = base

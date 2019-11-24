@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from .data import DataContainer
+from ..data import DataContainer
 
 
 class ImageDataContainer(DataContainer):
