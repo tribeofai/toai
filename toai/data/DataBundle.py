@@ -21,15 +21,16 @@ class DataBundle:
         x = []
         y = []
         for label, current_size in value_counts.items():
-            indices = []
+            current_indices = np.argwhere(data_bundle.y == label).flatten()
+            next_indices = []
             for _ in range(target_class_size // current_size):
-                indices.append(np.random.permutation(current_size))
-            indices.append(
-                np.random.randint(0, current_size, target_class_size % current_size)
+                next_indices.append(np.random.permutation(current_indices))
+            next_indices.append(
+                np.random.choice(current_indices, target_class_size % current_size)
             )
-            indices = np.concatenate(indices)
-            x.append(data_bundle.x[indices].flatten())
-            y.append(data_bundle.y[indices].flatten())
+            next_indices = np.concatenate(next_indices)
+            x.append(data_bundle.x[next_indices])
+            y.append(data_bundle.y[next_indices])
 
         return cls(np.concatenate(x), np.concatenate(y))
 
