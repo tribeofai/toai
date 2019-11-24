@@ -1,14 +1,16 @@
 import attr
 from typing import Optional
 import tensorflow as tf
+import tensorflow_addons as tfa
 
 
 @attr.s(auto_attribs=True)
 class ImageAugmentor:
     level: int = 0
     flips: Optional[str] = None
+    rotate: bool = True
 
-    def __call__(self, image: tf.Tensor) -> tf.Tensor:
+    def __call__(self, image: tf.Tensor, label: tf.Tensor) -> tf.Tensor:
         if self.flips in ["horizontal", "both"]:
             image = tf.image.random_flip_left_right(image)
         if self.flips in ["vertical", "both"]:
@@ -26,5 +28,9 @@ class ImageAugmentor:
             )
             image = tf.image.random_contrast(image, lower=lower, upper=upper)
             image = tf.image.random_saturation(image, lower=lower, upper=upper)
+            if self.rotate:
+                image = tfa.image.rotate(
+                    image, tf.random.uniform((), lower - 1, upper - 1)
+                )
             image = tf.clip_by_value(image, 0.0, 1.0)
-        return image
+        return image, label
