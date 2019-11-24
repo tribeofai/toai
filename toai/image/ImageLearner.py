@@ -9,7 +9,6 @@ import tensorflow as tf
 from tensorflow import keras
 
 from ..models import load_keras_model, save_keras_model
-from .ImageDataBundle import ImageDataBundle
 
 
 class ImageLearner:
@@ -89,7 +88,7 @@ class ImageLearner:
 
         self.save()
 
-    def save(self):
+    def save(self) -> None:
         save_keras_model(self.model, self.architecture_path, self.weights_path)
 
     def load(self, weights_only: bool = False):
@@ -113,8 +112,10 @@ class ImageLearner:
 
     def fit(
         self,
-        train_data_bundle: ImageDataBundle,
-        validation_data_bundle: ImageDataBundle,
+        train_dataset: tf.data.Dataset,
+        train_dataset_steps: int,
+        validation_dataset: tf.data.Dataset,
+        validation_dataset_steps: int,
         epochs: int,
         verbose: int = 1,
     ):
@@ -122,10 +123,10 @@ class ImageLearner:
         early_stopping_patience = reduce_lr_patience * 2
 
         self.history = self.model.fit(
-            x=train_data_bundle.data,
-            steps_per_epoch=train_data_bundle.steps,
-            validation_data=validation_data_bundle.data,
-            validation_steps=validation_data_bundle.steps,
+            x=train_dataset,
+            steps_per_epoch=train_dataset_steps,
+            validation_data=validation_dataset,
+            validation_steps=validation_dataset_steps,
             epochs=epochs,
             callbacks=[
                 keras.callbacks.ModelCheckpoint(
