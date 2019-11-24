@@ -60,7 +60,7 @@ class LearningRateFinder:
         steps_per_epoch: int = 1,
         batch_size: int = 32,
         sample_size: int = 2048,
-        verbose: int = 1,
+        verbose: int = 0,
     ):
         self.reset()
         if epochs is None:
