@@ -31,8 +31,8 @@ setup(
     long_description_content_type="text/markdown",
     author="Dovydas Ceilutka",
     author_email="dovydas.ceilutka@gmail.com",
-    url="https://github.com/mokahaiku/toai",
-    download_url="https://github.com/mokahaiku/toai",
+    url="https://github.com/tribeofai/toai",
+    download_url="https://github.com/tribeofai/toai",
     license="MIT",
     install_requires=[
         "attrs",
