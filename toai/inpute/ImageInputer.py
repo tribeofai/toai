@@ -14,9 +14,9 @@ class ImageInputer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, data: pd.DataFrame) -> pd.DataFrame:
-        def fill_missing_with_value(value):
-            def inner(x):
-                return x if os.path.isfile(x) else value
+        def fill_missing_with_value(value: Any):
+            def inner(image_path: str):
+                return image_path if os.path.isfile(image_path) else value
 
             return inner
 
