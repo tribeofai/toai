@@ -3,6 +3,7 @@
 import copy
 import json
 import math
+import os
 import pickle  # nosec
 import re
 import shutil
@@ -15,12 +16,16 @@ from typing import *
 
 import attr
 import joblib
+import lightgbm as lgb
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import pandas_profiling
 import requests
 import seaborn as sns
 import sklearn as sk
+import skopt
+from fastprogress import master_bar, progress_bar
 from PIL import Image
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
@@ -56,11 +61,6 @@ from sklearn.preprocessing import (
     StandardScaler,
 )
 from sklearn.svm import SVC, SVR, LinearSVC, LinearSVR, OneClassSVM
-
-import lightgbm as lgb
-import pandas_profiling
-import skopt
-from fastprogress import master_bar, progress_bar
 
 from .metrics import error_rate
 
