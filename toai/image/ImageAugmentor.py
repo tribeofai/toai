@@ -1,7 +1,6 @@
 import attr
 from typing import Optional
 import tensorflow as tf
-import tensorflow_addons as tfa
 
 
 @attr.s(auto_attribs=True)
@@ -28,9 +27,5 @@ class ImageAugmentor:
             )
             image = tf.image.random_contrast(image, lower=lower, upper=upper)
             image = tf.image.random_saturation(image, lower=lower, upper=upper)
-            if self.rotate:
-                image = tfa.image.rotate(
-                    image, tf.random.uniform((), lower - 1, upper - 1)
-                )
             image = tf.clip_by_value(image, 0.0, 1.0)
         return image, label
