@@ -44,6 +44,7 @@ setup(
         "kaggle",
         "lightgbm",
         "matplotlib",
+        "nb_black",
         "numpy",
         "pandas-profiling",
         "pandas",
