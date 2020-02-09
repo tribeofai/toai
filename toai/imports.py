@@ -63,8 +63,6 @@ from sklearn.preprocessing import (
 )
 from sklearn.svm import SVC, SVR, LinearSVC, LinearSVR, OneClassSVM
 
-from .metrics import error_rate
-
 try:
     import kaggle
 except OSError as error:
