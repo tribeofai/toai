@@ -1,6 +1,8 @@
 # pylama:ignore=W0611,W0401
 
 import copy
+import dataclasses
+import gc
 import json
 import math
 import os

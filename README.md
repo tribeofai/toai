@@ -4,6 +4,6 @@ To AI provides convenient classes and functions for working with Jupyter noteboo
 
 ## Install
 
-```
+```python
 pip install toai
 ```
