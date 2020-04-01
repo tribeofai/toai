@@ -5,6 +5,7 @@ import dataclasses
 import gc
 import json
 import math
+import operator
 import os
 import pickle  # nosec
 import re
