@@ -61,6 +61,7 @@ from sklearn.preprocessing import (
     OneHotEncoder,
     OrdinalEncoder,
     PolynomialFeatures,
+    PowerTransformer,
     RobustScaler,
     StandardScaler,
 )
