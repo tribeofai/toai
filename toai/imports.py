@@ -36,6 +36,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.impute import MissingIndicator, SimpleImputer
+from sklearn.linear_model import ElasticNet, LinearRegression, LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     classification_report,

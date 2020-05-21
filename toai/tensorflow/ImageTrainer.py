@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report
 
 from .ImageTrainingCycle import ImageTrainingCycle
 from .ImageLearner import ImageLearner
-from ..data import DataContainer
+from .DataContainer import DataContainer
 
 
 @attr.s(auto_attribs=True)
@@ -25,7 +25,7 @@ class ImageTrainer:
             "Name: {} Train Time: {:.1f} min. "
             "Eval Time: {:.2f}s Loss: {:.4f} Accuracy: {:.2%}"
         ),
-    ):
+    ) -> None:
         start_time = time.time()
         for cycle in cycles:
             self.learner.freeze() if cycle.freeze else self.learner.unfreeze()
@@ -60,7 +60,7 @@ class ImageTrainer:
 
     def evaluate(
         self, dataset: tf.data.Dataset, steps: Optional[int] = None, verbose: int = 1
-    ):
+    ) -> np.ndarray:
         return self.learner.model.evaluate(dataset, steps=steps, verbose=verbose)
 
     def predict(

@@ -8,7 +8,8 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
-from ..models import load_keras_model, save_keras_model
+from .load_keras_model import load_keras_model
+from .save_keras_model import save_keras_model
 
 
 class ImageLearner:
@@ -91,22 +92,22 @@ class ImageLearner:
     def save(self) -> None:
         save_keras_model(self.model, self.architecture_path, self.weights_path)
 
-    def load(self, weights_only: bool = False):
+    def load(self, weights_only: bool = False) -> None:
         if weights_only:
             self.model.load_weights(self.weights_path)
         else:
             self.model = load_keras_model(self.architecture_path, self.weights_path)
 
-    def compile(self, optimizer: keras.optimizers.Optimizer, lr: float):
+    def compile(self, optimizer: keras.optimizers.Optimizer, lr: float) -> None:
         self.model.compile(
             optimizer=optimizer(lr), loss=self.loss, metrics=self.metrics
         )
 
-    def freeze(self, n_layers: int = 1):
+    def freeze(self, n_layers: int = 1) -> None:
         for layer in self.model.layers[:-n_layers]:
             layer.trainable = False
 
-    def unfreeze(self):
+    def unfreeze(self) -> None:
         for layer in self.model.layers:
             layer.trainable = True
 
@@ -118,7 +119,7 @@ class ImageLearner:
         validation_dataset: tf.data.Dataset,
         validation_dataset_steps: Optional[int] = None,
         verbose: int = 1,
-    ):
+    ) -> None:
         reduce_lr_patience = max(2, epochs // 4)
         early_stopping_patience = reduce_lr_patience * 2
 
@@ -158,6 +159,6 @@ class ImageLearner:
         images = images.batch(1)
         return self.model.predict(images)
 
-    def show_history(self, contains: str, skip: int = 0):
+    def show_history(self, contains: str, skip: int = 0) -> None:
         history_df = pd.DataFrame(self.history.history)
         history_df[list(history_df.filter(regex=contains))].iloc[skip:].plot()

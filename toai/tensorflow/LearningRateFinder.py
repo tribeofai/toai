@@ -21,7 +21,7 @@ class LearningRateFinder:
         self.batch_num = 0
         self.weights_path: Optional[str] = None
 
-    def reset(self):
+    def reset(self) -> None:
         self.lrs = []
         self.losses = []
         self.lr_multiplier = 1.0

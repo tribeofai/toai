@@ -1,11 +1,14 @@
-from typing import Tuple
+from typing import Tuple, Optional
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
 
 def split_df(
-    data: pd.DataFrame, test_size: float, target_col: str = None, random_state: int = 42
+    data: pd.DataFrame,
+    test_size: float,
+    target_col: Optional[str] = None,
+    random_state: int = 42,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     stratify = data[target_col] if target_col else None
     train_data, test_data = train_test_split(

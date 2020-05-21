@@ -4,7 +4,6 @@ from typing import Dict, Optional, Tuple, Sequence
 import numpy as np
 import pandas as pd
 import sklearn
-import tensorflow as tf
 
 
 class DataBundle:
@@ -71,9 +70,6 @@ class DataBundle:
 
     def __len__(self) -> int:
         return len(self.y)
-
-    def to_dataset(self) -> tf.data.Dataset:
-        return tf.data.Dataset.from_tensor_slices((self.x, self.y))
 
     def value_counts(self) -> Dict[str, int]:
         values, counts = np.unique(self.y, return_counts=True)

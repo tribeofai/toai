@@ -1,9 +1,12 @@
 import os
 import shutil
 from pathlib import Path
+from typing import Union, Optional
 
 
-def all_files_in_dir(path, extension=None, keep_original=False):
+def all_files_in_dir(
+    path: Union[Path, str], extension: Optional[str] = None, keep_original: bool = False
+):
     path = Path(path)
     pathstring = str(path)
     for filename in os.listdir(pathstring):

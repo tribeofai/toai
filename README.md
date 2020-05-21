@@ -1,6 +1,6 @@
-# To AI
+# Toai
 
-To AI provides convenient classes and functions for working with Jupyter notebooks, scikit-learn and Tensorflow models.
+Toai provides convenient classes and functions for machine learning, data science and data analysis.
 
 ## Install
 
