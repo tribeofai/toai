@@ -8,8 +8,8 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
-from .load_keras_model import load_keras_model
-from .save_keras_model import save_keras_model
+from .load_model import load_keras_model
+from .save_model import save_keras_model
 
 
 class ImageLearner:
