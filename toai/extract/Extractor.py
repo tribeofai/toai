@@ -19,8 +19,10 @@ class Extractor(BaseEstimator, TransformerMixin):
         col_index = data.columns.get_loc(self.source_column)
         for i, (column, pattern) in enumerate(self.patterns.items(), 1):
             data.insert(
-                col_index + i, column, data[self.source_column].str.extract(pattern)
+                col_index + i,
+                column,
+                data[self.source_column].str.extract(pattern).to_numpy(),
             )
         if self.drop_source:
-            data.drop(self.source_column, axis=1)
+            data.drop(self.source_column, inplace=True, axis=1)
         return data
