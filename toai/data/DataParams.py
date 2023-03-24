@@ -1,17 +1,26 @@
+from dataclasses import dataclass, field
+
 from typing import List
-import attr
 
 
-@attr.s(auto_attribs=True)
+@dataclass
 class DataParams:
     target_col: str
-    cat_cols: List[str] = attr.Factory(list)
-    cont_cols: List[str] = attr.Factory(list)
-    text_cols: List[str] = attr.Factory(list)
-    img_cols: List[str] = attr.Factory(list)
-    feature_cols: List[str] = attr.ib(init=False)
+    n_cont_cols: List[str] = field(default_factory=list)
+    nn_cont_cols: List[str] = field(default_factory=list)
+    binary_cols: List[str] = field(default_factory=list)
+    lc_cat_cols: List[str] = field(default_factory=list)
+    hc_cat_cols: List[str] = field(default_factory=list)
+    text_cols: List[str] = field(default_factory=list)
 
-    def __attrs_post_init__(self):
-        self.feature_cols = (
-            self.cat_cols + self.cont_cols + self.text_cols + self.img_cols
-        )
+    @property
+    def cont_cols(self) -> List[str]:
+        return self.n_cont_cols + self.nn_cont_cols
+
+    @property
+    def cat_cols(self) -> List[str]:
+        return self.lc_cat_cols + self.hc_cat_cols
+
+    @property
+    def feature_cols(self) -> List[str]:
+        return self.cont_cols + self.binary_cols + self.cat_cols
